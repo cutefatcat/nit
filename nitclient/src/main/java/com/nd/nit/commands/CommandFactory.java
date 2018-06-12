@@ -22,7 +22,11 @@ public class CommandFactory {
 
         switch (args[0]){
             case "clone":
-                return new CloneCommand();
+                if (args.length != 2 || args[1] == null || args[1].equals("")){
+                    throw new Exception("Url parameter not specified!");
+                }
+
+                return new CloneCommand(args[1]);
             case "status":
                 return new StatusCommand();
             default:
