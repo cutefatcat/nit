@@ -4,13 +4,16 @@ import com.nd.nit.commands.Command;
 import com.nd.nit.commands.CommandFactory;
 
 /**
- * Hello world!
- *
+ * Application start point.
  */
 public class App {
     public static void main(String[] args) {
-        Command command = CommandFactory.getCommand(args);
-        //т.к. pattern factory + command
-        command.execute();
+        try {
+            Command command = CommandFactory.getCommand(args);
+            //т.к. pattern factory + command
+            command.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
