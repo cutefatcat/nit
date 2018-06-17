@@ -1,10 +1,9 @@
 package com.nd.nit.commands.impl;
 
 import com.nd.nit.commands.Command;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class CloneCommand implements Command{
     private String url;
@@ -30,6 +29,11 @@ public class CloneCommand implements Command{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            Files.write(conf.toPath(), url.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         /*
         TODO get files list
