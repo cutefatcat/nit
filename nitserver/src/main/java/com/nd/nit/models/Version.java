@@ -1,18 +1,19 @@
 package com.nd.nit.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Version {
     private int id;
-    private String token;
-    private LocalDate createDate;
-    private boolean release;
+    private LocalDateTime createDate;
+    private boolean released;
+    private String description;
 
-    public Version(int id, String token){
+    public Version(int id, String description){
         this.id = id;
-        this.token = token;
-        createDate = LocalDate.now();
-        release = false;
+        createDate = LocalDateTime.now();
+        released = false;
+        this.description = description;
     }
 
     public Version(){}
@@ -25,27 +26,27 @@ public class Version {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public String getDescription() {
+        return description;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public LocalDate getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public boolean isRelease() {
-        return release;
+    public boolean isReleased() {
+        return released;
     }
 
-    public void setRelease(boolean release) {
-        this.release = release;
+    public void setReleased(boolean released) {
+        this.released = released;
     }
 }
