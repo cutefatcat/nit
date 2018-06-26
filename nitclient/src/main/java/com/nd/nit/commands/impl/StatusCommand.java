@@ -6,6 +6,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class StatusCommand implements Command {
     @Override
     public void execute() {
+
         throw new NotImplementedException();
     }
 }

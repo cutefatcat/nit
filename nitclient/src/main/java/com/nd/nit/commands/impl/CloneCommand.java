@@ -1,6 +1,8 @@
 package com.nd.nit.commands.impl;
 
 import com.nd.nit.commands.Command;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +42,9 @@ public class CloneCommand implements Command{
         TODO get file one by one
          */
 
+        RestTemplate restTemplate = new RestTemplate();
+       // VersionModel = restTemplate.getForObject("http://localhost:8080/file", Quote.class);
 
-//        throw new NotImplementedException();
+
     }
 }
