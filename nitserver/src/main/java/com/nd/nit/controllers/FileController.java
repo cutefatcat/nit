@@ -50,7 +50,7 @@ public class FileController extends BaseController {
             FileBinaryDao fileBinaryDao = new FileBinaryDao(con);
             FileBinaryModel fileBinaryModel = new FileBinaryModel();
             fileBinaryModel.setContent(file.getBytes());
-            fileBinaryModel.setHashContent(HashUtil.calculateHash(file));
+            fileBinaryModel.setHashContent(HashUtil.calculateHash(file.getInputStream()));
 
             int fileBinaryId = fileBinaryDao.create(fileBinaryModel);
             FileInfoDao fileInfoDao = new FileInfoDao(con);

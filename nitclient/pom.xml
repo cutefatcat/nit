@@ -5,17 +5,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.nd.nit</groupId>
-  <artifactId>nit-client</artifactId>
+  <artifactId>nitclient</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <name>nit-client</name>
+  <name>nitclient</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.3.RELEASE</version>
+    <groupId>com.nd.nit</groupId>
+    <artifactId>nit</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -43,6 +43,11 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.nd.nit</groupId>
+      <artifactId>nitcommon</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

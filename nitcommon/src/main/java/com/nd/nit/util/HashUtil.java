@@ -1,18 +1,14 @@
 package com.nd.nit.util;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class HashUtil {
-    public static String calculateHash(MultipartFile file){
+    public static String calculateHash(InputStream fis){
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA-1");
-
-            final InputStream fis = file.getInputStream();
             byte[] dataBytes = new byte[1024];
             int bytesRead;
             while ((bytesRead = fis.read(dataBytes)) > 0) {

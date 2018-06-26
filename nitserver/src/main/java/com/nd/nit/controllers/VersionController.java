@@ -3,7 +3,6 @@ package com.nd.nit.controllers;
 import com.nd.nit.dao.FileInfoDao;
 import com.nd.nit.dao.VersionDao;
 import com.nd.nit.models.CreateVersionModel;
-import com.nd.nit.models.CreateVersionResponse;
 import com.nd.nit.models.FileInfoModel;
 import com.nd.nit.models.VersionModel;
 
