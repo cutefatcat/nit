@@ -1,12 +1,8 @@
 package com.nd.nit.dao;
 
-import com.nd.nit.models.Version;
+import com.nd.nit.models.VersionModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +17,28 @@ public class VersionDao {
         this.con = con;
     }
 
-    public void create(Version version) {
+    public int create(VersionModel version) throws SQLException {
         try (PreparedStatement stmnt = con.prepareStatement("INSERT INTO " + VERSION_TABLE_NAME +
-                " (create_date, released, description) VALUES (?, ?, ?);")) {
+                " (create_date, released, description) VALUES (?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS)) {
             stmnt.setString(1, LocalDateTime.now().toString());
             stmnt.setBoolean(2, false);
             stmnt.setString(3, version.getDescription());
             stmnt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+            ResultSet rs = stmnt.getGeneratedKeys();
+            if (rs.next()) {
+                int lastId = rs.getInt(1);
+                return lastId;
+            }
         }
+        return 0;
     }
 
-    public Version update(int id, Version version) {
+    public VersionModel update(int id, VersionModel version) {
         try (PreparedStatement stmnt =
-                     con.prepareStatement("UPDATE " + VERSION_TABLE_NAME + " SET create_date=?, released=?, description=? " +
+                     con.prepareStatement("UPDATE " + VERSION_TABLE_NAME +
+                             " SET create_date=?, released=?, description=? " +
                              "WHERE id=?")) {
             stmnt.setString(1, LocalDateTime.now().toString());
             stmnt.setBoolean(2, false);
@@ -48,12 +51,12 @@ public class VersionDao {
         return null;
     }
 
-    public Version get(int id) {
+    public VersionModel get(int id) {
         try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE id=?")) {
             stmnt.setInt(1, id);
             ResultSet resultSet = stmnt.executeQuery();
             resultSet.next();
-            Version version = new Version();
+            VersionModel version = new VersionModel();
             version.setId(resultSet.getInt("id"));
             version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
             version.setReleased(resultSet.getBoolean("released"));
@@ -65,12 +68,12 @@ public class VersionDao {
         }
     }
 
-    public List<Version> getAll() {
-        List<Version> versionList = new ArrayList<>();
+    public List<VersionModel> getAll() {
+        List<VersionModel> versionList = new ArrayList<>();
         try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version")) {
             ResultSet resultSet = stmnt.executeQuery();
             while (resultSet.next()) {
-                Version version = new Version();
+                VersionModel version = new VersionModel();
                 version.setId(resultSet.getInt("id"));
                 version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
                 version.setReleased(resultSet.getBoolean("released"));

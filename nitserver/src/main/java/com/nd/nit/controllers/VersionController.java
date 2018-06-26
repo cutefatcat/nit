@@ -1,26 +1,28 @@
 package com.nd.nit.controllers;
 
+import com.nd.nit.dao.FileInfoDao;
 import com.nd.nit.dao.VersionDao;
-import com.nd.nit.models.Version;
+import com.nd.nit.models.CreateVersionModel;
+import com.nd.nit.models.CreateVersionResponse;
+import com.nd.nit.models.FileInfoModel;
+import com.nd.nit.models.VersionModel;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/version")
-public class VersionController {
+public class VersionController extends BaseController {
 
     @RequestMapping("")
-    public ResponseEntity<List<Version>> getAll(){
-        List<Version> versionsList;
+    public ResponseEntity<List<VersionModel>> getAll(){
+        List<VersionModel> versionsList;
 
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
@@ -37,11 +39,11 @@ public class VersionController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     //Response для контроля ошибок на сервере
-    public ResponseEntity<Version> get(@PathVariable("id") int id ){
-        Version version;
+    public ResponseEntity<VersionModel> get(@PathVariable("id") int id ){
+        VersionModel versionModel;
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
-            version = versionDao.get(id);
+            versionModel = versionDao.get(id);
         } catch (SQLException | ClassNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -49,28 +51,38 @@ public class VersionController {
         }
 
         return ResponseEntity.ok()
-                .body(version);
+                .body(versionModel);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<String> create(@RequestBody Version version){
+    public ResponseEntity create(@RequestBody CreateVersionModel createVersionModel){//String //CreateVersionModel
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
-            versionDao.create(version);
+            int versionId = versionDao.create(createVersionModel.getVersionModel());
+            createVersionModel.getVersionModel().setId(versionId);
+            FileInfoDao fileInfoDao = new FileInfoDao(con);
+
+            for (int i = 0; i < createVersionModel.getInfoModelList().size(); i++) {
+                FileInfoModel fileInfoModel = createVersionModel.getInfoModelList().get(i);
+                int fileInfoId = fileInfoDao.create(fileInfoModel);
+                fileInfoModel.setId(fileInfoId);
+            }
+
         } catch (SQLException | ClassNotFoundException e) {
            return ResponseEntity
                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                    .body(e.getMessage());
         }
+
         return ResponseEntity.ok()
-                .body("Created");
+                .body(createVersionModel);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Version> update(@PathVariable("id") int id, @RequestBody Version version){
+    public ResponseEntity<VersionModel> update(@PathVariable("id") int id, @RequestBody VersionModel versionModel){
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
-            versionDao.update(id, version);
+            versionDao.update(id, versionModel);
             return ResponseEntity.ok()
             .body(versionDao.get(id));
         } catch (SQLException | ClassNotFoundException e) {
@@ -78,12 +90,5 @@ public class VersionController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
-    }
-
-    private Connection createConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/nit?useSSL=false", "root", "123qwe");
-        return con;
     }
 }

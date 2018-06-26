@@ -1,22 +1,21 @@
 package com.nd.nit.models;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Version {
+public class VersionModel {
     private int id;
     private LocalDateTime createDate;
     private boolean released;
     private String description;
 
-    public Version(int id, String description){
+    public VersionModel(int id, String description){
         this.id = id;
         createDate = LocalDateTime.now();
         released = false;
         this.description = description;
     }
 
-    public Version(){}
+    public VersionModel(){}
 
     public int getId() {
         return id;
