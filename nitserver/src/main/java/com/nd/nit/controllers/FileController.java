@@ -22,7 +22,7 @@ import java.sql.SQLException;
 @RequestMapping("/file")
 public class FileController extends BaseController {
     @RequestMapping(value = "/{file_id}", method = RequestMethod.GET)
-    public ResponseEntity<Resource> get(@PathVariable("file_id") int id ) throws IOException {
+    public ResponseEntity get(@PathVariable("file_id") int id ) throws IOException {
         FileBinaryModel fileBinaryModel;
 
         try (Connection con = createConnection()) {
@@ -32,7 +32,7 @@ public class FileController extends BaseController {
         } catch (SQLException | ClassNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+                    .body(e.getMessage());
         }
 
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(fileBinaryModel.getContent()));

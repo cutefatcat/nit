@@ -33,19 +33,19 @@ public class FileBinaryDao {
         return 0;
     }
 
-    public FileBinaryModel get(int id) {
+    public FileBinaryModel get(int id) throws SQLException, IOException {
         try (PreparedStatement stmnt = con.prepareStatement(
                 "SELECT * FROM " + FILE_TABLE_NAME + " WHERE id=?")) {
             stmnt.setInt(1, id);
             ResultSet resultSet = stmnt.executeQuery();
-            resultSet.next();
-            FileBinaryModel file = new FileBinaryModel();
-            file.setId(resultSet.getInt("id"));
-            file.setContent(IOUtils.toByteArray(resultSet.getBinaryStream("content")));
-            file.setHashContent(resultSet.getString("hash_content"));
+            if (resultSet.next()) {
+                FileBinaryModel file = new FileBinaryModel();
+                file.setId(resultSet.getInt("id"));
+                file.setContent(IOUtils.toByteArray(resultSet.getBinaryStream("content")));
+                file.setHashContent(resultSet.getString("hash_content"));
 
-            return file;
-        } catch (SQLException | IOException e) {
+                return file;
+            }
             return null;
         }
     }
