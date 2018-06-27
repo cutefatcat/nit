@@ -38,11 +38,13 @@ public class VersionController extends BaseController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     //Response для контроля ошибок на сервере
-    public ResponseEntity<VersionModel> get(@PathVariable("id") int id ){
-        VersionModel versionModel;
+    public ResponseEntity get(@PathVariable("id") int id ){
+        CreateVersionModel createVersionModel = new CreateVersionModel();
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
-            versionModel = versionDao.get(id);
+            createVersionModel.setVersionModel(versionDao.get(id));
+            FileInfoDao fileInfoDao= new FileInfoDao(con);
+            createVersionModel.setInfoModelList(fileInfoDao.getByVersionId(id));
         } catch (SQLException | ClassNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -50,7 +52,7 @@ public class VersionController extends BaseController {
         }
 
         return ResponseEntity.ok()
-                .body(versionModel);
+                .body(createVersionModel);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -59,10 +61,12 @@ public class VersionController extends BaseController {
             VersionDao versionDao = new VersionDao(con);
             int versionId = versionDao.create(createVersionModel.getVersionModel());
             createVersionModel.getVersionModel().setId(versionId);
+
             FileInfoDao fileInfoDao = new FileInfoDao(con);
 
             for (int i = 0; i < createVersionModel.getInfoModelList().size(); i++) {
                 FileInfoModel fileInfoModel = createVersionModel.getInfoModelList().get(i);
+                fileInfoModel.setVersionId(versionId);
                 int fileInfoId = fileInfoDao.create(fileInfoModel);
                 fileInfoModel.setId(fileInfoId);
             }

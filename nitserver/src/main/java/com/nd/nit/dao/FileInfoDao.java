@@ -3,6 +3,8 @@ package com.nd.nit.dao;
 import com.nd.nit.models.FileInfoModel;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileInfoDao {
     private final Connection con;
@@ -46,6 +48,27 @@ public class FileInfoDao {
             file.setBinaryId(resultSet.getInt("binary_id"));
 
             return file;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public List<FileInfoModel> getByVersionId(int versionId) {
+        try (PreparedStatement stmnt = con.prepareStatement(
+                "SELECT * FROM " + FILE_TABLE_NAME + " WHERE version_id=?")) {
+            stmnt.setInt(1, versionId);
+            ResultSet resultSet = stmnt.executeQuery();
+            List<FileInfoModel> fileInfoList = new ArrayList<>();
+            while (resultSet.next()) {
+                FileInfoModel fileInfoModel = new FileInfoModel();
+                fileInfoModel.setId(resultSet.getInt("id"));
+                fileInfoModel.setName(resultSet.getString("name"));
+                fileInfoModel.setPath(resultSet.getString("path"));
+                fileInfoModel.setVersionId(resultSet.getInt("version_id"));
+                fileInfoModel.setBinaryId(resultSet.getInt("binary_id"));
+                fileInfoList.add(fileInfoModel);
+            }
+            return fileInfoList;
         } catch (SQLException e) {
             return null;
         }

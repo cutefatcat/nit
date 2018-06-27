@@ -2,6 +2,8 @@ package com.nd.nit.models;
 
 import com.nd.nit.util.HashUtil;
 
+import java.sql.Connection;
+
 public class FileInfoModel {
     private int id;
     private String name;
@@ -10,7 +12,6 @@ public class FileInfoModel {
     private int binaryId;
 
     public FileInfoModel(){
-
     }
 
     public FileInfoModel(int id, String name, String path){ 
