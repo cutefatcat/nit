@@ -28,6 +28,16 @@ public class CloneCommand extends BaseCommand implements Command{
         File repository = new File(dir, ".nit");
         if (!repository.exists()) {
             repository.mkdir();
+        } else {
+            System.out.println("Repository already exists!");
+            return;
+        }
+
+        //удаление файлов в репозитории
+        try {
+            deleteFilesFromFolder();
+        } catch (IOException e) {
+            System.out.println("Error during files removing. " + e.getMessage());
         }
 
         File conf = new File(repository, "nit.conf");
@@ -44,10 +54,9 @@ public class CloneCommand extends BaseCommand implements Command{
             e.printStackTrace();
         }
 
-        List<FileInfoModel> fileInfoList = getFileInfoList();
+        List<FileInfoModel> fileInfoList = getFileInfoList(null);
 
-        for (int i = 0; i < fileInfoList.size(); i++){
-            FileInfoModel fileInfo = fileInfoList.get(i);
+        for (FileInfoModel fileInfo : fileInfoList){
             try {
                 downloadFile(fileInfo);
             } catch (IOException e) {

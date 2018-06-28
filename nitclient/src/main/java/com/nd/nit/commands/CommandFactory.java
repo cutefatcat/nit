@@ -36,8 +36,15 @@ public class CommandFactory {
                 }
 
                 return new PushCommand(args[1]);
-            case "":
-                return new CheckoutCommand();
+            case "pull":
+                if ( args.length == 1) {
+                    return new PullCommand(null);
+                } else if (args.length == 2) {
+                    return new PullCommand(Integer.parseInt(args[1]));
+                } else {
+                    throw new Exception("Wrong arguments count!");
+                }
+
 
             default:
 

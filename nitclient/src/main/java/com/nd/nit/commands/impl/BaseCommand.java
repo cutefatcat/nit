@@ -16,9 +16,16 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public abstract class BaseCommand {
-    protected List<FileInfoModel> getFileInfoList(){
+    protected List<FileInfoModel> getFileInfoList(Integer versionId){
         RestTemplate restTemplate = new RestTemplate();
-        CreateVersionModel createVersionModel  = restTemplate.getForObject("http://localhost:8080/version/last", CreateVersionModel.class);
+        String url;
+        if (versionId == null) {
+            url = "http://localhost:8080/version/last";
+        } else {
+            url = String.format("http://localhost:8080/version/%d", versionId);
+        }
+
+        CreateVersionModel createVersionModel  = restTemplate.getForObject(url, CreateVersionModel.class);
         List<FileInfoModel> fileInfoModelList = createVersionModel.getInfoModelList();
 
         return fileInfoModelList;
@@ -58,5 +65,24 @@ public abstract class BaseCommand {
 
             list.add(entry);
         }
+    }
+
+    protected void deleteFilesFromFolder() throws IOException {
+        File baseDir = new File(getCurrentDirectory());
+        for (File file : baseDir.listFiles()){
+            if (file.isDirectory() && file.getName().equals(".nit")){
+                continue;
+            }
+            delete(file);
+        }
+    }
+
+    private void delete(File file) throws IOException {
+        if (file.isDirectory()) {
+            for (File c : file.listFiles())
+                delete(c);
+        }
+        if (!file.delete())
+            throw new FileNotFoundException("Failed to delete file: " + file);
     }
 }
