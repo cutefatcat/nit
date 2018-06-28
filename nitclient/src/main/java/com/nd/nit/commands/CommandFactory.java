@@ -1,6 +1,8 @@
 package com.nd.nit.commands;
 
 import com.nd.nit.commands.impl.CloneCommand;
+import com.nd.nit.commands.impl.DiffCommand;
+import com.nd.nit.commands.impl.PushCommand;
 import com.nd.nit.commands.impl.StatusCommand;
 
 /**
@@ -29,6 +31,15 @@ public class CommandFactory {
                 return new CloneCommand(args[1]);
             case "status":
                 return new StatusCommand();
+//            case "diff":
+//                return new DiffCommand();
+            case "push":
+                if (args.length != 2 || args[1] == null || args[1].equals("")){
+                    throw new Exception("Description parameter not specified!");
+                }
+
+                return new PushCommand(args[1]);
+
             default:
                 throw new Exception("Wrong command!");
         }
