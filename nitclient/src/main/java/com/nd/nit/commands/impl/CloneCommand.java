@@ -53,8 +53,7 @@ public class CloneCommand implements Command{
         TODO get file one by one
          */
 
-        List<FileInfoModel> fileInfoList = new ArrayList<>();
-        fileInfoList = getFileInfoList();
+        List<FileInfoModel> fileInfoList = getFileInfoList();
         int fileBinaryId;
 
         for (int i = 0; i < fileInfoList.size(); i++){
@@ -68,8 +67,7 @@ public class CloneCommand implements Command{
         CreateVersionModel createVersionModel  = restTemplate.getForObject("http://localhost:8080/version/16",CreateVersionModel.class);
 
         FileInfoModel fileInfoModel = new FileInfoModel();
-        List<FileInfoModel> fileInfoModelList = new ArrayList<>();
-        fileInfoModelList = createVersionModel.getInfoModelList();
+        List<FileInfoModel> fileInfoModelList = createVersionModel.getInfoModelList();
 
         return fileInfoModelList;
     }
