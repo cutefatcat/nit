@@ -2,21 +2,17 @@ package com.nd.nit.commands.impl;
 
 import com.nd.nit.commands.Command;
 import com.nd.nit.models.CreateVersionModel;
-import com.nd.nit.models.FileBinaryModel;
 import com.nd.nit.models.FileInfoModel;
-import com.nd.nit.models.VersionModel;
+
 import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-import sun.nio.ch.IOUtil;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 public class CloneCommand implements Command{
     private String url;
@@ -80,6 +76,7 @@ public class CloneCommand implements Command{
         //headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         ResponseEntity<Resource> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Resource.class);
+
         try (OutputStream outputStream = new FileOutputStream(new File("file.txt"))) {
             IOUtils.copy(responseEntity.getBody().getInputStream(), outputStream);
         } catch (FileNotFoundException e) {

@@ -1,9 +1,6 @@
 package com.nd.nit.commands;
 
-import com.nd.nit.commands.impl.CloneCommand;
-import com.nd.nit.commands.impl.DiffCommand;
-import com.nd.nit.commands.impl.PushCommand;
-import com.nd.nit.commands.impl.StatusCommand;
+import com.nd.nit.commands.impl.*;
 
 /**
   * An implementation of CommandFactory.
@@ -39,8 +36,11 @@ public class CommandFactory {
                 }
 
                 return new PushCommand(args[1]);
+            case "":
+                return new CheckoutCommand();
 
             default:
+
                 throw new Exception("Wrong command!");
         }
     }

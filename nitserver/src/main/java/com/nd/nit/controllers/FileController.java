@@ -1,13 +1,11 @@
 package com.nd.nit.controllers;
 
-
 import com.nd.nit.dao.FileBinaryDao;
 import com.nd.nit.dao.FileInfoDao;
 import com.nd.nit.models.FileBinaryModel;
 import com.nd.nit.util.HashUtil;
 
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

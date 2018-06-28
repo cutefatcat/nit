@@ -35,24 +35,23 @@ public class VersionDao {
         return 0;
     }
 
-    public VersionModel update(int id, VersionModel version) {
+    public VersionModel update(int id, VersionModel version) throws SQLException {
         try (PreparedStatement stmnt =
                      con.prepareStatement("UPDATE " + VERSION_TABLE_NAME +
                              " SET create_date=?, released=?, description=? " +
                              "WHERE id=?")) {
             stmnt.setString(1, LocalDateTime.now().toString());
-            stmnt.setBoolean(2, false);
+            stmnt.setBoolean(2, version.isReleased());
             stmnt.setString(3, version.getDescription());
             stmnt.setInt(4, id);
             stmnt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
         return null;
     }
 
-    public VersionModel get(int id) {
-        try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE id=?")) {
+    public VersionModel get(int id) throws SQLException {
+        try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE id=? and released=1")) {
             stmnt.setInt(1, id);
             ResultSet resultSet = stmnt.executeQuery();
             resultSet.next();
@@ -63,12 +62,10 @@ public class VersionDao {
             version.setDescription(resultSet.getString("description"));
 
             return version;
-        } catch (SQLException e) {
-            return null;
         }
     }
 
-    public List<VersionModel> getAll() {
+    public List<VersionModel> getAll() throws SQLException {
         List<VersionModel> versionList = new ArrayList<>();
         try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version")) {
             ResultSet resultSet = stmnt.executeQuery();
@@ -82,8 +79,21 @@ public class VersionDao {
             }
 
             return versionList;
-        } catch (SQLException e) {
-            return null;
+        }
+    }
+
+    public VersionModel getLast() throws SQLException {
+        try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE released=1 " +
+                "ORDER BY id DESC LIMIT 1")) {
+            ResultSet resultSet = stmnt.executeQuery();
+            resultSet.next();
+            VersionModel version = new VersionModel();
+            version.setId(resultSet.getInt("id"));
+            version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
+            version.setReleased(resultSet.getBoolean("released"));
+            version.setDescription(resultSet.getString("description"));
+
+            return version;
         }
     }
 }

@@ -34,7 +34,7 @@ public class FileInfoDao {
         return 0;
     }
 
-    public FileInfoModel get(int id) {
+    public FileInfoModel get(int id) throws SQLException {
         try (PreparedStatement stmnt = con.prepareStatement(
                 "SELECT * FROM " + FILE_TABLE_NAME + " WHERE id=?")) {
             stmnt.setInt(1, id);
@@ -48,12 +48,10 @@ public class FileInfoDao {
             file.setBinaryId(resultSet.getInt("binary_id"));
 
             return file;
-        } catch (SQLException e) {
-            return null;
         }
     }
 
-    public List<FileInfoModel> getByVersionId(int versionId) {
+    public List<FileInfoModel> getByVersionId(int versionId) throws SQLException {
         try (PreparedStatement stmnt = con.prepareStatement(
                 "SELECT * FROM " + FILE_TABLE_NAME + " WHERE version_id=?")) {
             stmnt.setInt(1, versionId);
@@ -69,19 +67,15 @@ public class FileInfoDao {
                 fileInfoList.add(fileInfoModel);
             }
             return fileInfoList;
-        } catch (SQLException e) {
-            return null;
         }
     }
 
-    public void updateFileBinaryId(int fileInfoId, int fileBinaryId){
+    public void updateFileBinaryId(int fileInfoId, int fileBinaryId) throws SQLException {
         try (PreparedStatement stmnt = con.prepareStatement(
                 "UPDATE " + FILE_TABLE_NAME + " SET binary_id=? WHERE id=?")) {
             stmnt.setInt(1, fileBinaryId);
             stmnt.setInt(2, fileInfoId);
             stmnt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }

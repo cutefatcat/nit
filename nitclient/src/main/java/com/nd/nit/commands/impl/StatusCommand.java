@@ -5,7 +5,6 @@ import com.nd.nit.models.CreateVersionModel;
 import com.nd.nit.models.FileInfoModel;
 import com.nd.nit.util.HashUtil;
 import org.springframework.web.client.RestTemplate;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -17,31 +16,8 @@ import java.util.Map;
 public class StatusCommand implements Command {
     @Override
     public void execute() {
-
-//        String hashFullname = getHashFullname();
-//        String hashContent = getHashContent();// server version
-//
-//        if (hashFullname.compareTo(newhashFullname)){
-//            "unchanged";
-//        } else {
-//
-//        }
-//        List<Integer> changes = new ArrayList();
-//        changes.
-//        switch (newhashContent){ //current hash
-//            case hashContent :
-//                "add";
-//            case :
-//                "delete";
-//            case :
-//                "modifie";
-//            case :
-//                "unchanged";
-//        }
-        //throw new NotImplementedException();
-
         RestTemplate restTemplate = new RestTemplate();
-        CreateVersionModel createVersionModel  = restTemplate.getForObject("http://localhost:8080/version/16",CreateVersionModel.class);
+        CreateVersionModel createVersionModel  = restTemplate.getForObject("http://localhost:8080/version/last",CreateVersionModel.class);
 
         Map<String, FileInfoModel> serverFilesMap= new HashMap<>();
         for (FileInfoModel fileInfo : createVersionModel.getInfoModelList()){
@@ -51,8 +27,7 @@ public class StatusCommand implements Command {
         final String dirPath = System.getProperty("user.dir");
         File dir = new File(dirPath);
         Path basePath = dir.toPath();
-        List<File> list = new ArrayList<>(); //push загружает сервис post vesia
-        //id sils push post
+        List<File> list = new ArrayList<>();
         processFilesFromFolder(dir, list);
 
         List<File> newFiles = new ArrayList<>();
@@ -83,7 +58,6 @@ public class StatusCommand implements Command {
 
         //TODO print collections to console
         System.out.println();
-
     }
 
     private void processFilesFromFolder(File folder, List<File> list) {
@@ -95,7 +69,7 @@ public class StatusCommand implements Command {
                 }
                 continue;
             }
-            // иначе вам попался файл, обрабатывайте его!
+
             list.add(entry);
         }
     }
