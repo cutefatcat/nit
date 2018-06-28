@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class PushCommand implements Command {
+public class PushCommand extends BaseCommand implements Command {
     private String description;
 
     public PushCommand(String description){
@@ -30,8 +30,7 @@ public class PushCommand implements Command {
 
     @Override
     public void execute() {
-        final String dirPath = "temp";      //System.getProperty("user.dir");
-        File dir = new File(dirPath);
+        File dir = new File(getCurrentDirectory());
         Path basePath = dir.toPath();
         List<File> list = new ArrayList<>();
         processFilesFromFolder(dir, list);
@@ -91,19 +90,5 @@ public class PushCommand implements Command {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<VersionModel> requestUpdate = new HttpEntity<>(createVersionModel.getVersionModel(), headers);
         restTemplate.exchange(resourceUrl, HttpMethod.PUT, requestUpdate, Void.class);
-    }
-
-    private void processFilesFromFolder(File folder, List<File> list) {
-        File[] folderEntries = folder.listFiles();
-        for (File entry : folderEntries) {
-            if (entry.isDirectory()) {
-                if (!entry.getName().equals(".nit")) {
-                    processFilesFromFolder(entry, list);
-                }
-                continue;
-            }
-
-            list.add(entry);
-        }
     }
 }

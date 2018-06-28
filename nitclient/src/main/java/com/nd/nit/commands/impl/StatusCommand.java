@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StatusCommand implements Command {
+public class StatusCommand extends BaseCommand implements Command {
     @Override
     public void execute() {
         RestTemplate restTemplate = new RestTemplate();
@@ -48,6 +48,7 @@ public class StatusCommand implements Command {
 
             clientFilesMap.put(relativePathHash, file);
         }
+
         List<FileInfoModel> removedFiles = new ArrayList<>();
         for (FileInfoModel fileInfo : createVersionModel.getInfoModelList()){
             if (!clientFilesMap.containsKey(fileInfo.getHashFullname())) {
@@ -58,19 +59,5 @@ public class StatusCommand implements Command {
 
         //TODO print collections to console
         System.out.println();
-    }
-
-    private void processFilesFromFolder(File folder, List<File> list) {
-        File[] folderEntries = folder.listFiles();
-        for (File entry : folderEntries) {
-            if (entry.isDirectory()) {
-                if (!entry.getName().equals(".nit")) {
-                    processFilesFromFolder(entry, list);
-                }
-                continue;
-            }
-
-            list.add(entry);
-        }
     }
 }
