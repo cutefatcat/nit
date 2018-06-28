@@ -62,20 +62,27 @@ public class PushCommand extends BaseCommand implements Command {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpEntity<CreateVersionModel> request = new HttpEntity<>(createVersion);
-        CreateVersionModel createVersionModel = restTemplate.postForObject("http://localhost:8080/version", request, CreateVersionModel.class);
+        String baseUrl;
+        try {
+            baseUrl = getBaseUrl();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        CreateVersionModel createVersionModel = restTemplate.postForObject( baseUrl + "/version", request, CreateVersionModel.class);
 
         //5
         for (FileInfoModel infoModel : createVersionModel.getInfoModelList()) {
             File file = clientFilesMap.get(infoModel.getHashFullname());
 
-            MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<String, Object>();
+            MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
             parameters.add("file", new FileSystemResource(file));
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "multipart/form-data");
             headers.set("Accept", "text/plain");
 
-            String url = String.format("http://localhost:8080/file/%d", infoModel.getId());
+            String url = String.format(baseUrl + "/file/%d", infoModel.getId());
             restTemplate.postForObject(
                     url,
                     new HttpEntity<MultiValueMap<String, Object>>(parameters, headers),
@@ -86,7 +93,7 @@ public class PushCommand extends BaseCommand implements Command {
         //6
         createVersionModel.getVersionModel().setReleased(true);
         String resourceUrl =
-                "http://localhost:8080/version" + '/' + createVersionModel.getVersionModel().getId();
+               baseUrl + "/version" + '/' + createVersionModel.getVersionModel().getId();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<VersionModel> requestUpdate = new HttpEntity<>(createVersionModel.getVersionModel(), headers);
         restTemplate.exchange(resourceUrl, HttpMethod.PUT, requestUpdate, Void.class);

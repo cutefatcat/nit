@@ -11,18 +11,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseCommand {
     protected List<FileInfoModel> getFileInfoList(Integer versionId){
+        String baseUrl;
+        try {
+            baseUrl = getBaseUrl();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return Collections.EMPTY_LIST;
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         String url;
         if (versionId == null) {
-            url = "http://localhost:8080/version/last";
+            url = baseUrl + "/version/last";
         } else {
-            url = String.format("http://localhost:8080/version/%d", versionId);
+            url = String.format(baseUrl + "/version/%d", versionId);
         }
 
         CreateVersionModel createVersionModel  = restTemplate.getForObject(url, CreateVersionModel.class);
@@ -32,8 +42,16 @@ public abstract class BaseCommand {
     }
 
     protected void downloadFile(FileInfoModel fileInfo) throws IOException {
+        String baseUrl;
+        try {
+            baseUrl = getBaseUrl();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
         RestTemplate restTemplate = new RestTemplate();
-        String url = String.format("http://localhost:8080/file/%s", fileInfo.getBinaryId());
+        String url = String.format(baseUrl + "/file/%s", fileInfo.getBinaryId());
 
         HttpHeaders headers = new HttpHeaders();
         //headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
@@ -67,12 +85,18 @@ public abstract class BaseCommand {
         }
     }
 
+    protected String getBaseUrl() throws Exception {
+        Path configPath = Paths.get(getCurrentDirectory(), ".nit", "nit.conf");
+        return Files.readAllLines(configPath).get(0);
+    }
+
     protected void deleteFilesFromFolder() throws IOException {
         File baseDir = new File(getCurrentDirectory());
         for (File file : baseDir.listFiles()){
             if (file.isDirectory() && file.getName().equals(".nit")){
                 continue;
             }
+
             delete(file);
         }
     }
@@ -82,7 +106,8 @@ public abstract class BaseCommand {
             for (File c : file.listFiles())
                 delete(c);
         }
-        if (!file.delete())
+        if (!file.delete()) {
             throw new FileNotFoundException("Failed to delete file: " + file);
+        }
     }
 }

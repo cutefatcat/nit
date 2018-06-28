@@ -16,15 +16,23 @@ import java.util.Map;
 public class StatusCommand extends BaseCommand implements Command {
     @Override
     public void execute() {
+        String baseUrl;
+        try {
+            baseUrl = getBaseUrl();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
         RestTemplate restTemplate = new RestTemplate();
-        CreateVersionModel createVersionModel  = restTemplate.getForObject("http://localhost:8080/version/last",CreateVersionModel.class);
+        CreateVersionModel createVersionModel  = restTemplate.getForObject(baseUrl + "/version/last",CreateVersionModel.class);
 
         Map<String, FileInfoModel> serverFilesMap= new HashMap<>();
         for (FileInfoModel fileInfo : createVersionModel.getInfoModelList()){
             serverFilesMap.put(fileInfo.getHashFullname(),fileInfo);
         }
 
-        final String dirPath = System.getProperty("user.dir");
+        final String dirPath = getCurrentDirectory();
         File dir = new File(dirPath);
         Path basePath = dir.toPath();
         List<File> list = new ArrayList<>();
@@ -57,7 +65,18 @@ public class StatusCommand extends BaseCommand implements Command {
             }
         }
 
-        //TODO print collections to console
-        System.out.println();
+        //print collections to console
+        System.out.println("New files: ");
+        for (File file : newFiles) {
+            System.out.println(file.getPath());
+        }
+        System.out.println("Modified files: ");
+        for (File file : modifiedFiles) {
+            System.out.println(file.getPath());
+        }
+        System.out.println("Removed files: ");
+        for (FileInfoModel file : removedFiles) {
+            System.out.println(file.getPath() + file.getName());
+        }
     }
 }
