@@ -39,15 +39,17 @@ public class FileInfoDao {
                 "SELECT * FROM " + FILE_TABLE_NAME + " WHERE id=?")) {
             stmnt.setInt(1, id);
             ResultSet resultSet = stmnt.executeQuery();
-            resultSet.next();
-            FileInfoModel file = new FileInfoModel();
-            file.setId(resultSet.getInt("id"));
-            file.setName(resultSet.getString("name"));
-            file.setPath(resultSet.getString("path"));
-            file.setVersionId(resultSet.getInt("version_id"));
-            file.setBinaryId(resultSet.getInt("binary_id"));
+            //resultSet.next();
+            if (resultSet.next()) {
+                FileInfoModel file = new FileInfoModel();
+                file.setId(resultSet.getInt("id"));
+                file.setName(resultSet.getString("name"));
+                file.setPath(resultSet.getString("path"));
+                file.setVersionId(resultSet.getInt("version_id"));
+                file.setBinaryId(resultSet.getInt("binary_id"));
 
-            return file;
+                return file;
+            } return null;
         }
     }
 

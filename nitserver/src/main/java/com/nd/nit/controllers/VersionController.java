@@ -4,6 +4,7 @@ import com.nd.nit.dao.FileInfoDao;
 import com.nd.nit.dao.VersionDao;
 import com.nd.nit.models.CreateVersionModel;
 import com.nd.nit.models.FileInfoModel;
+import com.nd.nit.models.ListVersionModel;
 import com.nd.nit.models.VersionModel;
 
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,25 @@ public class VersionController extends BaseController {
 
     @RequestMapping("")
     public ResponseEntity getAll(){
-        List<VersionModel> versionsList;
+//        List<VersionModel> versionsList;
+//
+//        try (Connection con = createConnection()){
+//            VersionDao versionDao = new VersionDao(con);
+//            versionsList = versionDao.getAll();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(e.getMessage());
+//        }
+//
+//        return ResponseEntity.ok()
+//                .body(versionsList);
+
+        ListVersionModel versionModelsList = new ListVersionModel();
 
         try (Connection con = createConnection()){
             VersionDao versionDao = new VersionDao(con);
-            versionsList = versionDao.getAll();
+            versionModelsList.setListVersions(versionDao.getAll());
         } catch (SQLException | ClassNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -32,7 +47,7 @@ public class VersionController extends BaseController {
         }
 
         return ResponseEntity.ok()
-                .body(versionsList);
+                .body(versionModelsList);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -56,8 +71,10 @@ public class VersionController extends BaseController {
             VersionDao versionDao = new VersionDao(con);
             VersionModel versionModel = versionId != null ? versionDao.get(versionId) : versionDao.getLast();
             createVersionModel.setVersionModel(versionModel);
-            FileInfoDao fileInfoDao= new FileInfoDao(con);
-            createVersionModel.setInfoModelList(fileInfoDao.getByVersionId(versionModel.getId()));
+            if (versionModel != null) {
+                FileInfoDao fileInfoDao = new FileInfoDao(con);
+                createVersionModel.setInfoModelList(fileInfoDao.getByVersionId(versionModel.getId()));
+            }
         } catch (SQLException | ClassNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

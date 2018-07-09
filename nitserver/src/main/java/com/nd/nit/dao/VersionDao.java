@@ -54,14 +54,17 @@ public class VersionDao {
         try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE id=? and released=1")) {
             stmnt.setInt(1, id);
             ResultSet resultSet = stmnt.executeQuery();
-            resultSet.next();
-            VersionModel version = new VersionModel();
-            version.setId(resultSet.getInt("id"));
-            version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
-            version.setReleased(resultSet.getBoolean("released"));
-            version.setDescription(resultSet.getString("description"));
+            if (resultSet.next()) {
+                VersionModel version = new VersionModel();
+                version.setId(resultSet.getInt("id"));
+                version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
+                version.setReleased(resultSet.getBoolean("released"));
+                version.setDescription(resultSet.getString("description"));
 
-            return version;
+                return version;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -86,14 +89,15 @@ public class VersionDao {
         try (PreparedStatement stmnt = con.prepareStatement("SELECT * FROM version WHERE released=1 " +
                 "ORDER BY id DESC LIMIT 1")) {
             ResultSet resultSet = stmnt.executeQuery();
-            resultSet.next();
-            VersionModel version = new VersionModel();
-            version.setId(resultSet.getInt("id"));
-            version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
-            version.setReleased(resultSet.getBoolean("released"));
-            version.setDescription(resultSet.getString("description"));
+            if (resultSet.next()) {
+                VersionModel version = new VersionModel();
+                version.setId(resultSet.getInt("id"));
+                version.setCreateDate(resultSet.getTimestamp("create_date").toLocalDateTime());
+                version.setReleased(resultSet.getBoolean("released"));
+                version.setDescription(resultSet.getString("description"));
 
-            return version;
+                return version;
+            } return null;
         }
     }
 }

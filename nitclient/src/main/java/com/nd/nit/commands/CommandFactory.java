@@ -44,7 +44,8 @@ public class CommandFactory {
                 } else {
                     throw new Exception("Wrong arguments count!");
                 }
-
+            case "versions":
+                return new VersionsCommand();
 
             default:
 

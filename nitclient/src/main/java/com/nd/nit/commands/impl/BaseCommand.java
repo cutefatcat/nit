@@ -68,7 +68,7 @@ public abstract class BaseCommand {
     }
 
     protected String getCurrentDirectory(){
-        return "temp";      //System.getProperty("user.dir");
+        return "temp"; //System.getProperty("user.dir");
     }
 
     protected void processFilesFromFolder(File folder, List<File> list) {
