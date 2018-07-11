@@ -61,4 +61,22 @@ public class FileController extends BaseController {
         return ResponseEntity.ok()
                 .body("Created");
     }
+
+    @RequestMapping(value = "/{file_id}/hash", method = RequestMethod.GET)
+    public ResponseEntity getHashContent(@PathVariable("file_id") int id ) throws IOException {
+        String hashContent;
+
+        try (Connection con = createConnection()) {
+            FileBinaryDao fileBinaryDao = new FileBinaryDao(con);
+            hashContent = fileBinaryDao.getHashContent(id);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+
+        return ResponseEntity.ok()
+                .body(hashContent);
+    }
 }

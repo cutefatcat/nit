@@ -46,6 +46,21 @@ public class FileBinaryDao {
 
                 return file;
             }
+
+            return null;
+        }
+    }
+
+    public String getHashContent (int id) throws SQLException, IOException {
+        try (PreparedStatement stmnt = con.prepareStatement(
+                "SELECT hash_content FROM " + FILE_TABLE_NAME + " WHERE id=?")) {
+            stmnt.setInt(1, id);
+            ResultSet resultSet = stmnt.executeQuery();
+            if (resultSet.next()) {
+                String hashContent = resultSet.getString("hash_content");
+                return hashContent;
+            }
+
             return null;
         }
     }
